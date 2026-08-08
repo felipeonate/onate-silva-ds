@@ -18,6 +18,7 @@ Cada token está marcado:
 - **`TARGET`** — objetivo de marca, no implementado en producción hoy. Viene de la capa semántica (`--surface-*`, `--accent`, componentes React) o de valores nunca extraídos a `:root` en producción.
 - **`AMBOS`** — mismo valor en los dos sistemas.
 - **`RESUELTO EN DESIGN.MD`** — un token donde este documento fijó un valor que corrige o reemplaza lo que dice el export de Claude Design vigente. Cuando se re-exporte el DS, ese export debe alinearse a este archivo, no producir una nueva discusión.
+- **`NUEVO`** — token que no existe en producción ni en ningún export de Claude Design; se originó directamente en este documento. El próximo export debe incorporarlo, no al revés.
 
 **Si estás editando templates PHP del tema:** usa solo los valores `PROD` o `AMBOS`, y la convención `--color-*` de `CLAUDE.md`. Nunca introduzcas `--surface-*`, `--accent` ni nombres semánticos en ese contexto — ese vocabulario es exclusivo de prototipos en Claude Design / Lovable / Stitch.
 
@@ -80,6 +81,43 @@ gris-900: "#0D0E0E"
 negro:  "#02090A"  # Tinta pura. Solo texto más fuerte y superficies inversas. No usar como texto de cuerpo por defecto.
 blanco: "#FAFAFA"  # Superficie de página por defecto. Las tarjetas suben a blanco puro (#FFFFFF) donde el componente lo requiera.
 ```
+
+### Zarzamora — acento cálido, `NUEVO` (sin equivalente en producción ni en el export de Claude Design)
+
+Tercer color de marca, agregado para dar variación cromática dentro de contextos como
+resultados/impacto de proyectos, donde turquesa+menta se leían planos. Generado
+computacionalmente en sesión de Claude Chat el 7 ago 2026 — no viene de `tokens/*.css`
+ni de ningún export de Claude Design. El próximo export del DS debe incorporar esta
+escala, no al revés.
+
+Elegido tras evaluar y descartar varios candidatos (Arcilla `#A53F2B`, Manjar `#D17B0F`,
+Frambuesa `#D52941`, `#AB2133`, `#330036`) por quedar dentro del mismo arco de 30-40° que
+`error`/`warning` en la rueda de color, o por saturación/luminosidad incompatible con el
+resto de la escala. Zarzamora-500 está a 50°+ de distancia de hue de los cuatro colores
+de estado — sin ambigüedad visual posible con ellos.
+
+```yaml
+zarzamora-50:  "#F4EDF2"
+zarzamora-100: "#E8D7E4"
+zarzamora-200: "#CFACC6"
+zarzamora-300: "#B681A8"
+zarzamora-400: "#9D568B"
+zarzamora-500: "#842A6D"  # Acento cálido. Nunca fondo de página completo, mismo criterio que turquesa-500.
+zarzamora-600: "#6A2258"
+zarzamora-700: "#4F1941"
+zarzamora-800: "#35112C"
+zarzamora-900: "#1A0816"
+```
+
+Hue constante en 315.3° en los 10 pasos, misma estructura que turquesa/menta (curva de
+luminosidad calcada de la de turquesa, cuyo 500 tiene un `L` casi idéntico al de
+Zarzamora-500 — 33.7% vs 34.1%). Contraste vs `--blanco`: pasos 50-300 caen bajo 3:1
+(solo válidos como fondo/tinte, nunca texto); desde el paso 400 en adelante (4.86:1+) es
+válido como texto de cuerpo.
+
+**Uso:** acento decorativo cálido en contextos que ya usan turquesa/menta y necesitan un
+tercer punto de contraste — p. ej. tarjetas de resultado/impacto. **No es** un color de
+estado — no reemplaza ni convive con `error`/`warning`/`success`/`info` en el mismo rol.
 
 ### Estados semánticos — `RESUELTO EN DESIGN.MD` para `warning`, resto `AMBOS`
 
@@ -408,6 +446,7 @@ No existen como componentes React en producción; producción resuelve los mismo
 - No introducir nombres --surface-*/--accent en templates PHP del tema — esa capa es exclusiva de prototipos.
 - No inventar valores de radio, sombra, espaciado o tipografía intermedios que este documento marca como TARGET sin
   verificar — pedir el zip fuente del DS antes de construir algo que dependa de ellos.
+- Zarzamora es acento decorativo, no color de estado — no usarlo para comunicar éxito/error/advertencia/info.
 ```
 
 ---
@@ -422,11 +461,12 @@ Sin pendientes abiertos que requieran otra decisión de diseño. Historial de lo
 4. **`--shadow-brand` fuera de su regla** — resuelto agregando `--shadow-brand-soft` para hover de tarjetas, dejando `--shadow-brand` exclusivo para CTAs/hero.
 5. **Radio 14px** — migra a `--radius-lg` (12px).
 6. **`--weight-medium: 500`** — confirmado como TARGET válido, simplemente sin caso de uso todavía. No vestigial, no urgente.
+7. **Zarzamora — tercer color de marca (acento cálido)** — `#842A6D` con escala completa 50→900, agregado en sesión posterior a esta consolidación (7 ago 2026) para resolver planitud cromática en tarjetas de resultado/impacto. Generado y validado (distancia de hue ≥50° a los 4 colores de estado, contraste WCAG por paso) en Claude Chat — no viene de ningún export de Claude Design ni de producción. Ver sección "Color".
 
 Quedan dos notas menores sin decisión formal, ninguna bloqueante: los radios `2px`/`6px` de producción sin escalón TARGET equivalente (casos puntuales, no un componente repetido), y el desajuste de `brand_glow_cta` del CTA hero (`0 8px 24px rgba(22,129,150,0.3)`) contra los nuevos `--shadow-brand`/`--shadow-brand-soft` — se limpia cuando se toque ese componente, no antes.
 
-Acción mecánica pendiente, fuera de este documento: aplicar estos seis cambios en el proyecto de Claude Design y reexportar, para que el próximo `tokens/*.css` deje de estar desalineado con este archivo. No bloquea nada — este documento manda mientras tanto.
+Acción mecánica pendiente, fuera de este documento: aplicar estos siete cambios en el proyecto de Claude Design y reexportar, para que el próximo `tokens/*.css` deje de estar desalineado con este archivo. No bloquea nada — este documento manda mientras tanto.
 
 ---
 
-*Consolidado el 7 de agosto de 2026. Fuente de verdad (SOT) de este proyecto — reemplaza al `DESIGN.md` anterior del repo `onate-silva-ds`. Jerarquía: este archivo → producción (`felipeonate2026`) → exports de Claude Design (insumo, no autoridad). Fuente de cada valor marcada inline (`PROD` / `TARGET` / `AMBOS` / `RESUELTO EN DESIGN.MD`).*
+*Consolidado el 7 de agosto de 2026 (Zarzamora agregado el mismo día, sesión posterior). Fuente de verdad (SOT) de este proyecto — reemplaza al `DESIGN.md` anterior del repo `onate-silva-ds`. Jerarquía: este archivo → producción (`felipeonate2026`) → exports de Claude Design (insumo, no autoridad). Fuente de cada valor marcada inline (`PROD` / `TARGET` / `AMBOS` / `RESUELTO EN DESIGN.MD` / `NUEVO`).*
